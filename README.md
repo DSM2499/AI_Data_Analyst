@@ -37,11 +37,17 @@ The system intelligently interprets user intent using GPT, chooses the appropria
 ## 🛠️ Tools & Stack
 **Layer** : **Tools Used**
 UI : Streamlit
+
 ML Models: scikit-learn
+
 Plots: Matplotlib, seaborn
+
 Data Handling: Pandas
+
 LLM Orchestration: OpenAI GPT 3.5-turbo
+
 Data Chat Layer: PandasAI
+
 Report Generation: GPT 3.5 + FPDF
 
 ## 📊 Impact & Value
