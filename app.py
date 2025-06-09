@@ -7,7 +7,6 @@ from pipelines.regression import linear_regression_pipeline
 from pipelines.logistic import logistic_regression_pipeline
 from utils.report_helpers import create_analysis_results
 from report_generator import generate_report
-from utils.report_helpers import create_analysis_results
 
 #Load the environment variables
 load_dotenv()
