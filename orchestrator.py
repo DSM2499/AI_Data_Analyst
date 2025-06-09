@@ -11,8 +11,11 @@ import json
 load_dotenv()
 
 openai_api_key = os.getenv("OPEN_AI_KEY")
-
-client = openai.OpenAI(api_key = openai_api_key)
+client = None
+if openai_api_key:
+    client = openai.OpenAI(api_key=openai_api_key)
+else:
+    print("[WARN] OPEN_AI_KEY not set. GPT features will be disabled.")
 
 def infer_task(df: pd.DataFrame, task_type) -> str:
     try:
@@ -43,6 +46,9 @@ def infer_task(df: pd.DataFrame, task_type) -> str:
         
         """
 
+        if client is None:
+            raise RuntimeError("OpenAI client not configured")
+
         response = client.chat.completions.create(
             model = "gpt-3.5-turbo",
             messages = [
@@ -54,9 +60,17 @@ def infer_task(df: pd.DataFrame, task_type) -> str:
         task_info = response.choices[0].message.content.strip()
         task_info = json.loads(task_info)
         print(f"[INFO] GPT response: {task_info}")
-        return task_info
     except Exception as e:
         print(f"[WARN] GPT target inference failed: {e}")
+        # Fallback to sensible defaults if GPT inference fails
+        default_target = df.columns[-1]
+        if pd.api.types.is_numeric_dtype(df[default_target]):
+            inferred_type = "linear regression"
+        else:
+            inferred_type = "logistic regression"
+        task_info = {"task_type": inferred_type, "target": default_target}
+        print(f"[INFO] Using fallback task info: {task_info}")
+    return task_info
 
 def run_analysis(df: pd.DataFrame, args: dict):
     task = args.get("task_type")
